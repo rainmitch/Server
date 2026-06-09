@@ -10,10 +10,13 @@
 
   boot.initrd.availableKernelModules = [ "vmd" "xhci_pci" "ahci" "nvme" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelModules = [ "kvm-intel" "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
   boot.extraModulePackages = [ ];
 
-  swapDevices = [ ];
+  swapDevices = [ {
+    device = "/swapfile";
+    size = 8 * 1024;
+  } ];
   
   hardware.graphics = {
     enable = true;
