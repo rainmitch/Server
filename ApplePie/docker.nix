@@ -5,6 +5,7 @@
   imports = [
     ./docker/portainer.nix
     ./docker/comfyui.nix
+    ./docker/shimmie2.nix
   ];
   
   hardware.nvidia-container-toolkit = {

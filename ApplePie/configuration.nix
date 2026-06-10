@@ -11,7 +11,18 @@
       ./networking.nix
       ./docker.nix
       ./hardware-configuration.nix
+      
+      <sops-nix/modules/sops>
     ];
+  
+  sops.defaultSopsFile = /etc/nixos/secrets/secrets.yaml; # Adjust path to your actual secrets file
+  sops.age.keyFile = "/etc/sops/sops.key"; # Path to your age key
+  #sops.validateSopsFiles = false; # <-- Add this line
+  sops.secrets.shimmie2_postgres = {
+    owner = "root";
+    group = "root";
+    mode = "0600";
+  };
 
   # Use the systemd-boot EFI boot loader.
   #boot.loader.systemd-boot.enable = true;
@@ -20,6 +31,10 @@
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages;
   nixpkgs.config.allowUnfree = true;
+
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 10; # Default is usually 60. Lower numbers mean less swapping.
+  };
 
   # networking.hostName = "nixos"; # Define your hostname.
 
@@ -46,7 +61,7 @@
     home = "/home/rain";
   };
 
-  environment.systemPackages = with pkgs; [nano zsh ethtool openssl];
+  environment.systemPackages = with pkgs; [nano zsh ethtool openssl git sops age ];
 
   programs.zsh = {
     enable = true;
