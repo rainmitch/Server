@@ -2,20 +2,6 @@
 { config, lib, pkgs, ... }:
 
 {
-  systemd.services.init-shimmie2-network = {
-    description = "Create Shimmie2 Private Docker Network";
-    after = [ "network.target" "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      ${pkgs.docker}/bin/docker network inspect shimmie2-net >/dev/null 2>&1 || \
-      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.20.0.0/16 shimmie2-net
-    '';
-  };
-
   virtualisation.oci-containers.containers."shimmie2-postgres" = {
     image = "postgres:15-alpine";
     volumes = [

@@ -11,10 +11,10 @@
       "/docker/comfyUI:/root"
     ];
     extraOptions = [
-      #"--tty"
-      #"--interactive"         # Replaces stdin_open: true
       "--device=nvidia.com/gpu=all"
-      #"--config=/var/lib/docker"
+      "--network=ai-net"
+      "--network-alias=comfyui"
+      "--ip=172.21.0.2"
     ];
   };
 
