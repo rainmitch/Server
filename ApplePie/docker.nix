@@ -3,6 +3,7 @@
 
 {
   imports = [
+    ./docker/gluetun.nix
     ./docker/portainer.nix
     ./docker/comfyui.nix
     ./docker/koboldcpp.nix
@@ -74,6 +75,36 @@
     script = ''
       ${pkgs.docker}/bin/docker network inspect media-net >/dev/null 2>&1 || \
       ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.22.0.0/16 media-net
+    '';
+  };
+  
+
+  # VPN NETWORKS
+  systemd.services.init-vpn-in = {
+    description = "Create VPN In Private Docker Network";
+    after = [ "network.target" "docker.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${pkgs.docker}/bin/docker network inspect vpn-in-net >/dev/null 2>&1 || \
+      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.51.0.0/16 vpn-in-net
+    '';
+  };
+
+  systemd.services.init-vpn-out = {
+    description = "Create VPN Out Private Docker Network";
+    after = [ "network.target" "docker.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${pkgs.docker}/bin/docker network inspect vpn-out-net >/dev/null 2>&1 || \
+      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.52.0.0/16 --ipv6 vpn-out-net
     '';
   };
 }

@@ -32,6 +32,16 @@
     group = "root";
     mode = "0600";
   };
+  sops.secrets.vpn_in = {
+    owner = "root";
+    group = "root";
+    mode = "0600";
+  };
+  sops.secrets.vpn_out = {
+    owner = "root";
+    group = "root";
+    mode = "0600";
+  };
 
   # Use the systemd-boot EFI boot loader.
   #boot.loader.systemd-boot.enable = true;
