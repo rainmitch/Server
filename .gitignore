@@ -1,0 +1,3 @@
+.sops*
+*.decrypted.*
+.env
