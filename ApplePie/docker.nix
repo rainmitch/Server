@@ -7,7 +7,10 @@
     ./docker/comfyui.nix
     ./docker/koboldcpp.nix
     ./docker/sillytavern.nix
+    ./docker/openWebUI.nix
     ./docker/shimmie2.nix
+    ./docker/jellyfin.nix
+    ./docker/home-assistant.nix
   ];
   
   hardware.nvidia-container-toolkit = {
@@ -57,6 +60,20 @@
     script = ''
       ${pkgs.docker}/bin/docker network inspect ai-net >/dev/null 2>&1 || \
       ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.21.0.0/16 ai-net
+    '';
+  };
+  
+  systemd.services.init-media-network = {
+    description = "Create Media Private Docker Network";
+    after = [ "network.target" "docker.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${pkgs.docker}/bin/docker network inspect media-net >/dev/null 2>&1 || \
+      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.22.0.0/16 media-net
     '';
   };
 }

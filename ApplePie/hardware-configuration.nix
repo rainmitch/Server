@@ -21,7 +21,16 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true; # Fixes the first assertion error
+    extraPackages = with pkgs; [
+      intel-media-driver   # For modern Intel iGPUs (Broadwell and newer)
+      intel-compute-runtime # OpenCL support (required for hardware tone mapping)
+      vpl-gpu-rt           # Intel VPL runtime for QSV (11th Gen and newer)
+    ];
   };
+  environment.sessionVariables = { LIBVA_DRIVER_NAME = "iHD"; };
+  boot.kernelParams = [ "i915.enable_guc=3" ];
+  hardware.enableAllFirmware = true;
+  
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
     modesetting.enable = true;

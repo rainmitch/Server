@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./filesystems.nix
+      ./users.nix
       ./networking.nix
       ./docker.nix
       ./hardware-configuration.nix
@@ -15,6 +16,9 @@
       <sops-nix/modules/sops>
     ];
   
+  hardware.bluetooth.enable = true;
+  services.dbus.enable = true;
+
   sops.defaultSopsFile = /etc/nixos/secrets/secrets.yaml; # Adjust path to your actual secrets file
   sops.age.keyFile = "/etc/sops/sops.key"; # Path to your age key
   #sops.validateSopsFiles = false; # <-- Add this line
@@ -53,18 +57,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.rain = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-      tree
-      zsh
-    ];
-    shell = pkgs.zsh;
-    home = "/home/rain";
-  };
 
   environment.systemPackages = with pkgs; [nano zsh ethtool openssl git sops age ];
 

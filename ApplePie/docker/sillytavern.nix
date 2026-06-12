@@ -26,7 +26,7 @@
   };
 
   systemd.services.docker-sillytavern = {
-    after = [ "docker.service" "docker-koboldcpp.service" ];
-    requires = [ "docker.service" "docker-koboldcpp.service" ];
+    after = [ "docker.service" ];
+    requires = [ "docker.service" ];
   };
 }
