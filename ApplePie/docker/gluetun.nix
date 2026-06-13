@@ -16,7 +16,9 @@
     environment = {
       VPN_SERVICE_PROVIDER = "custom";
       VPN_TYPE = "wireguard";
-      DOT = "off";
+      #DOT = "off";
+      #LOG_LEVEL = "debug";
+      #WIREGUARD_IMPLEMENTATION = "userspace";
     };
     environmentFiles = [
       config.sops.secrets.vpn_in.path
@@ -24,8 +26,8 @@
   };
 
   systemd.services.docker-gluetun-in = {
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
+    after = [ "docker.service" "init-vpn-in.service" ];
+    requires = [ "docker.service" "init-vpn-in.service" ];
   };
 
   
@@ -44,7 +46,8 @@
     environment = {
       VPN_SERVICE_PROVIDER = "custom";
       VPN_TYPE = "wireguard";
-      DOT = "off";
+      #DOT = "off";
+      #LOG_LEVEL = "debug";
     };
     environmentFiles = [
       config.sops.secrets.vpn_out.path
@@ -52,7 +55,7 @@
   };
 
   systemd.services.docker-gluetun-out = {
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
+    after = [ "docker.service" "init-vpn-out.service" ];
+    requires = [ "docker.service" "init-vpn-out.service" ];
   };
 }

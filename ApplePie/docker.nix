@@ -90,7 +90,7 @@
     };
     script = ''
       ${pkgs.docker}/bin/docker network inspect vpn-in-net >/dev/null 2>&1 || \
-      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.51.0.0/16 vpn-in-net
+      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.51.0.0/16 vpn-in-net --opt com.docker.network.bridge.name=vpn-in-br
     '';
   };
 
@@ -104,7 +104,7 @@
     };
     script = ''
       ${pkgs.docker}/bin/docker network inspect vpn-out-net >/dev/null 2>&1 || \
-      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.52.0.0/16 --ipv6 vpn-out-net
+      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.52.0.0/16 --ipv6 vpn-out-net --opt com.docker.network.bridge.name=vpn-out-br
     '';
   };
 }

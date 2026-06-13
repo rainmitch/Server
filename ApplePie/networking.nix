@@ -27,4 +27,13 @@
       PermitRootLogin = "no";
     };
   };
+  
+  #networking.firewall.enable = false;
+  networking.firewall = {
+    enable = true;
+    # 1. Relax reverse path filtering so the VPN responses aren't dropped
+    checkReversePath = "loose";
+    
+    trustedInterfaces = [ "docker0" "vpn-in-br" "vpn-out-br" ];
+  };
 }
