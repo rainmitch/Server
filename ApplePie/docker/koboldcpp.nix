@@ -23,7 +23,7 @@
     environment = {
       KCPP_DONT_UPDATE = "false";
       KCPP_DONT_TUNNEL = "true";
-      KCPP_ARGS = "--model /models/gemma-4-12B-it-qat-q4_0-unquantized-heretic-Q4_K_M.gguf --usecuda --flashattention --useswa --gpulayers 99 --context 73728 --smartcache 2 --jinja --jinjathink true --adminpassword \"$KCPP_ADMINPASSWORD\" --admin --chat-template-kwargs \"{\"enable_thinking\": true}\"";
+      KCPP_ARGS = "--model /models/gemma-4-12B-it-qat-q4_0-unquantized-heretic-Q4_0.gguf --model-draft /models/gemma-4-12B-it-qat-assistant-MTP-Q8_0.gguf --draftamount 2 --usecuda --flashattention --useswa --gpulayers 99 --context 70000  --jinja --jinjathink true --adminpassword \"$KCPP_ADMINPASSWORD\" --admin";
     };
   };
 

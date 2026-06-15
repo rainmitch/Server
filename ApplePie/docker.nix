@@ -3,15 +3,17 @@
 
 {
   imports = [
-    ./docker/gluetun.nix
+    #./docker/gluetun.nix
+    #./docker/wireguard.nix
     ./docker/portainer.nix
-    ./docker/comfyui.nix
+    #./docker/comfyui.nix
     ./docker/koboldcpp.nix
     ./docker/sillytavern.nix
     ./docker/openWebUI.nix
     ./docker/shimmie2.nix
     ./docker/jellyfin.nix
     ./docker/home-assistant.nix
+    #./docker/qbittorrent.nix
   ];
   
   hardware.nvidia-container-toolkit = {

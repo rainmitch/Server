@@ -14,34 +14,11 @@
       ./hardware-configuration.nix
       
       <sops-nix/modules/sops>
+      ./secrets.nix
     ];
   
   hardware.bluetooth.enable = true;
   services.dbus.enable = true;
-
-  sops.defaultSopsFile = /etc/nixos/secrets/secrets.yaml; # Adjust path to your actual secrets file
-  sops.age.keyFile = "/etc/sops/sops.key"; # Path to your age key
-  #sops.validateSopsFiles = false; # <-- Add this line
-  sops.secrets.shimmie2_postgres = {
-    owner = "root";
-    group = "root";
-    mode = "0600";
-  };
-  sops.secrets.koboldcpp = {
-    owner = "root";
-    group = "root";
-    mode = "0600";
-  };
-  sops.secrets.vpn_in = {
-    owner = "root";
-    group = "root";
-    mode = "0600";
-  };
-  sops.secrets.vpn_out = {
-    owner = "root";
-    group = "root";
-    mode = "0600";
-  };
 
   # Use the systemd-boot EFI boot loader.
   #boot.loader.systemd-boot.enable = true;
