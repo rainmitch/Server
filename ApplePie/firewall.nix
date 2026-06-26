@@ -42,14 +42,14 @@
         # 1. Allow return traffic for connections the containers started
         ct state established,related accept
         
-
-        # 2. LAN to DOCKER EXEMPTION: Allow your local subnet to talk to your containers
+        # LAN to DOCKER EXEMPTION: Allow your local subnet to talk to your containers
         # This allows the rewritten forwarded packets to reach Docker safely.
         ip saddr 192.168.0.0/24 ip daddr 172.16.0.0/12 accept
-
-        # 3. ALLOW CONTAINER -> WAN: Mark and accept outbound internet traffic
+        ip saddr 172.16.0.0/12 ip daddr 172.16.0.0/12 drop
+        # ALLOW CONTAINER -> WAN: Mark and accept outbound internet traffic
         # This keeps container networks isolated from each other (No Docker -> Docker)
         ip saddr 172.16.0.0/12 ip daddr != 172.16.0.0/12 meta mark set 0x1 accept
+        # Allow Docker Container -> Docker container communication
       }
       
       chain output {
@@ -67,6 +67,7 @@
         udp dport 9930 counter accept
         udp sport 9930 counter accept
         tcp dport 80 accept
+        tcp dport 7000 accept
         
         # Accept traffic from the VPN server IP to your client IP on a specific source port over TCP/UDP
         ip saddr ${config.sops.placeholder.WIREGUARD_VPN_IN_CLIENT} udp sport 9930 counter accept
