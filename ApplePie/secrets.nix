@@ -23,21 +23,42 @@
     mode = "0600";
   };
   
-  /*sops.templates."vpn-in.conf" = {
-    # This is where the container will look for the file
-    path = "/docker/wireguard/in/vpn-in.conf"; 
-    
-    # syntax for inserting the decrypted values into the template
-    content = ''
-      [Interface]
-      PrivateKey = ${config.sops.secrets.vpn_in.vpn_in."WIREGUARD_PRIVATE_KEY"}
-      Address = ${config.sops.secrets.vpn_in."WIREGUARD_ADDRESSES"}
-      DNS = ${config.sops.secrets.vpn_in."WIREGUARD_DNS_ADDRESSES"}
+  sops.secrets = {
+    WIREGUARD_VPN_OUT_CONF = {};
+    WIREGUARD_VPN_IN_CONF = {};
+    WIREGUARD_VPN_IN_SERVER = {};
+    WIREGUARD_VPN_IN_CLIENT = {};
+  };
 
-      [Peer]
-      PublicKey = ${config.sops.secrets.vpn_in."WIREGUARD_PUBLIC_KEY"}
-      Endpoint = ${config.sops.secrets.vpn_in."WIREGUARD_ENDPOINT"}
-      AllowedIPs = ${config.sops.secrets.vpn_in."WIREGUARD_ALLOWED_IPS"}
+  
+  sops.templates."vpn-out.conf" = {
+    # This is where the container will look for the file
+    #path = "/docker/wireguard/out/wg_confs/vpn-out.conf";
+    path = "/etc/wireguard/vpn-out.conf";
+    owner = "rain";
+    group = "users";
+    mode = "0600";
+
+    # syntax for inserting the decrypted values into the template
+    content = ''${config.sops.placeholder.WIREGUARD_VPN_OUT_CONF}'';
+  };
+  
+  sops.templates."vpn-in.conf" = {
+    # This is where the container will look for the file
+    #path = "/docker/wireguard/out/wg_confs/vpn-out.conf";
+    path = "/etc/wireguard/vpn-in.conf";
+    owner = "rain";
+    group = "users";
+    mode = "0600";
+
+    # syntax for inserting the decrypted values into the template
+    content = ''${config.sops.placeholder.WIREGUARD_VPN_IN_CONF}'';
+  };
+  
+  environment.etc."nftables-secrets.conf" = {
+    text = ''
+      define vpn_in_server_ip = ${config.sops.placeholder.WIREGUARD_VPN_IN_SERVER}
+      define sops_vpn_in_static_ip = ${config.sops.placeholder.WIREGUARD_VPN_IN_CLIENT}
     '';
-  };*/
+  };
 }

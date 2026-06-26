@@ -10,6 +10,7 @@
       ./filesystems.nix
       ./users.nix
       ./networking.nix
+      ./firewall.nix
       ./docker.nix
       ./hardware-configuration.nix
       
@@ -30,6 +31,11 @@
 
   boot.kernel.sysctl = {
     "vm.swappiness" = 10; # Default is usually 60. Lower numbers mean less swapping.
+    "net.ipv4.conf.all.rp_filter" = 2;
+  "net.ipv4.conf.default.rp_filter" = 2;
+  "net.ipv4.conf.eno2.rp_filter" = 2;
+  "net.ipv4.conf.vpn-out.rp_filter" = 2;
+    "net.ipv4.ip_forward" = 1;
   };
 
   # networking.hostName = "nixos"; # Define your hostname.
@@ -45,7 +51,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
 
-  environment.systemPackages = with pkgs; [nano zsh ethtool openssl git sops age ];
+  environment.systemPackages = with pkgs; [nano zsh ethtool openssl git sops age wireguard-tools iptables];
 
   programs.zsh = {
     enable = true;

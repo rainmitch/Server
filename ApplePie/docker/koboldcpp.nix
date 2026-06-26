@@ -13,9 +13,10 @@
     ];
     extraOptions = [
       "--device=nvidia.com/gpu=all"
+      "--memory=16g"
+      "--memory-swap=16g"
       "--network-alias=koboldcpp"
       "--network=ai-net"
-      "--ip=172.21.0.3"
     ];
     environmentFiles = [
       config.sops.secrets.koboldcpp.path
@@ -23,7 +24,7 @@
     environment = {
       KCPP_DONT_UPDATE = "false";
       KCPP_DONT_TUNNEL = "true";
-      KCPP_ARGS = "--model /models/gemma-4-12B-it-qat-q4_0-unquantized-heretic-Q4_0.gguf --model-draft /models/gemma-4-12B-it-qat-assistant-MTP-Q8_0.gguf --draftamount 2 --usecuda --flashattention --useswa --gpulayers 99 --context 70000  --jinja --jinjathink true --adminpassword \"$KCPP_ADMINPASSWORD\" --admin";
+      KCPP_ARGS = "--model /models/gemma-4-12B-it-qat-q4_0-unquantized-heretic-Q4_0.gguf  --mmproj /models/gemma4-mmproj-BF16.gguf --usecuda --flashattention --useswa --gpulayers 99 --context 70000  --jinja --jinjathink true --adminpassword \"$KCPP_ADMINPASSWORD\" --admin";
     };
   };
 

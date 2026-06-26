@@ -7,13 +7,15 @@
     #./docker/wireguard.nix
     ./docker/portainer.nix
     #./docker/comfyui.nix
+    ./docker/kokoro.nix
+    ./docker/nvidia-asr.nix
     ./docker/koboldcpp.nix
     ./docker/sillytavern.nix
     ./docker/openWebUI.nix
     ./docker/shimmie2.nix
     ./docker/jellyfin.nix
     ./docker/home-assistant.nix
-    #./docker/qbittorrent.nix
+    ./docker/qbittorrent.nix
   ];
   
   hardware.nvidia-container-toolkit = {
@@ -24,6 +26,7 @@
   # Enable Docker virtualization
   virtualisation.docker = {
     enable = true;
+    extraOptions = "--ipv6 --fixed-cidr-v6=\"fd00:ffff::/64\"";
     daemon.settings = {
       features = {
         cdi = true;
@@ -80,7 +83,21 @@
     '';
   };
   
-
+  systemd.services.init-home-network = {
+    description = "Create Home Private Docker Network";
+    after = [ "network.target" "docker.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${pkgs.docker}/bin/docker network inspect home-net >/dev/null 2>&1 || \
+      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.23.0.0/16 --ipv6 home-net
+    '';
+  };
+  
+  /*
   # VPN NETWORKS
   systemd.services.init-vpn-in = {
     description = "Create VPN In Private Docker Network";
@@ -95,6 +112,7 @@
       ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.51.0.0/16 vpn-in-net --opt com.docker.network.bridge.name=vpn-in-br
     '';
   };
+  */
 
   systemd.services.init-vpn-out = {
     description = "Create VPN Out Private Docker Network";
@@ -106,7 +124,7 @@
     };
     script = ''
       ${pkgs.docker}/bin/docker network inspect vpn-out-net >/dev/null 2>&1 || \
-      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.52.0.0/16 --ipv6 vpn-out-net --opt com.docker.network.bridge.name=vpn-out-br
+      ${pkgs.docker}/bin/docker network create -d ipvlan --subnet 172.52.0.0/16 -o parent=vpn-out -o ipvlan_mode=l3 vpn-out-net
     '';
   };
 }

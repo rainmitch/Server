@@ -2,13 +2,14 @@
 { config, lib, pkgs, ... }:
 
 {
-  virtualisation.oci-containers.containers."wireguard-in" = {
+  virtualisation.oci-containers.containers."wireguard-out" = {
     image = "linuxserver/wireguard:latest";
     ports = [
     ];
     volumes = [
-      "/docker/wireguard/in:/config"
+      "/docker/wireguard/out:/config"
       "/lib/modules:/lib/modules"
+      "\${CREDENTIALS_DIRECTORY}/vpn-out.conf:/config/wg0.conf:ro"
     ];
     extraOptions = [
       "--network=host"
@@ -25,8 +26,13 @@
     };
   };
 
-  systemd.services.docker-wireguard-in = {
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
+  systemd.services.docker-wireguard-out = {
+    after = [ "docker.service" "sops-nix.service" ];
+    requires = [ "docker.service"];
+    
+    serviceConfig = {
+      # Systemd safely resolves the symlink and isolates ONLY this file for the service
+      LoadCredential = "vpn-out.conf:/run/secrets/rendered/vpn-out.conf";
+    };
   };
 }

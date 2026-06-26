@@ -14,7 +14,6 @@
       "--device=nvidia.com/gpu=all"
       "--network=ai-net"
       "--network-alias=comfyui"
-      "--ip=172.21.0.2"
     ];
   };
 

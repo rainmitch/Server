@@ -21,7 +21,6 @@
     extraOptions = [
       "--network-alias=sillytavern"
       "--network=ai-net"
-      "--ip=172.21.0.4"
     ];
   };
 
