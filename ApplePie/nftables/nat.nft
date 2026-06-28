@@ -1,0 +1,17 @@
+table ip nat {
+    chain prerouting_nat {
+        type nat hook prerouting priority dstnat; policy accept;
+        ip saddr 172.16.0.0/12 udp dport 53 dnat to $WIREGUARD_DNS_1
+        ip saddr 172.16.0.0/12 tcp dport 53 dnat to $WIREGUARD_DNS_1
+        # DNAT Port Forwarding
+        iifname "eno2" tcp dport 7000 dnat to 172.21.0.6:8080
+    }
+
+    chain postrouting_nat {
+        type nat hook postrouting priority srcnat; policy accept;
+        
+        # Outbound Masquerading
+        oifname "vpn-out" masquerade
+        oifname "eno2" masquerade
+    }
+}

@@ -5,7 +5,7 @@
   virtualisation.oci-containers.containers."sillytavern" = {
     image = "ghcr.io/sillytavern/sillytavern:latest";
     ports = [
-      "7388:8000"
+      "127.0.0.1:7388:8000"
     ];
     volumes = [
       "/docker/sillytavern/config:/home/node/app/config"

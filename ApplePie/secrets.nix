@@ -24,10 +24,13 @@
   };
   
   sops.secrets = {
-    WIREGUARD_VPN_OUT_CONF = {};
-    WIREGUARD_VPN_IN_CONF = {};
-    WIREGUARD_VPN_IN_SERVER = {};
-    WIREGUARD_VPN_IN_CLIENT = {};
+    WIREGUARD_VPN_OUT_CONF     = {};
+    WIREGUARD_VPN_OUT_SERVER   = {};
+    WIREGUARD_VPN_IN_CONF      = {};
+    WIREGUARD_VPN_IN_SERVER    = {};
+    WIREGUARD_VPN_IN_CLIENT    = {};
+    WIREGUARD_DNS_1            = {};
+    WIREGUARD_DNS_2            = {};
   };
 
   

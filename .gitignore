@@ -1,3 +1,6 @@
+!ApplePie/.sops.yaml
 .sops*
 *.decrypted.*
 .env
+*.save
+*.bak

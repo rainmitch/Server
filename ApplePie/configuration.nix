@@ -30,16 +30,23 @@
   nixpkgs.config.allowUnfree = true;
 
   boot.kernel.sysctl = {
-    "vm.swappiness" = 10; # Default is usually 60. Lower numbers mean less swapping.
-    "net.ipv4.conf.all.rp_filter" = 2;
+  "vm.swappiness" = 10;
+  "net.ipv4.ip_forward" = 1;
+
+  "net.ipv4.conf.all.rp_filter" = 2;
   "net.ipv4.conf.default.rp_filter" = 2;
   "net.ipv4.conf.eno2.rp_filter" = 2;
   "net.ipv4.conf.vpn-out.rp_filter" = 2;
-    "net.ipv4.ip_forward" = 1;
-    "net.bridge.bridge-nf-call-iptables" = 0;
+  "net.ipv4.conf.vpn-in.rp_filter" = 2;
+  "net.ipv4.conf.docker0.rp_filter" = 2;
+
+  #"net.bridge.bridge-nf-call-iptables" = 1;
+  #"net.bridge.bridge-nf-call-ip6tables" = 1;
+  #"net.bridge.bridge-nf-call-arptables" = 1;
+  "net.bridge.bridge-nf-call-iptables" = 0;
   "net.bridge.bridge-nf-call-ip6tables" = 0;
   "net.bridge.bridge-nf-call-arptables" = 0;
-  };
+};
 
   # networking.hostName = "nixos"; # Define your hostname.
 

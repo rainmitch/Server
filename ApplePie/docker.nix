@@ -6,6 +6,7 @@
     #./docker/gluetun.nix
     #./docker/wireguard.nix
     ./docker/portainer.nix
+    ./docker/nginx-proxy-manager.nix
     #./docker/comfyui.nix
     ./docker/kokoro.nix
     ./docker/nvidia-asr.nix
@@ -26,12 +27,16 @@
   # Enable Docker virtualization
   virtualisation.docker = {
     enable = true;
-    extraOptions = "--ipv6 --fixed-cidr-v6=\"fd00:ffff::/64\"";
+    extraOptions = "--iptables=false --ipv6 --fixed-cidr-v6=\"fd00:ffff::/64\"";
     daemon.settings = {
       features = {
         cdi = true;
       };
       cdi-spec-dirs = [ "/var/run/cdi" "/etc/cdi" ];
+      dns = [
+      "${builtins.replaceStrings ["\n"] [""] (builtins.readFile config.sops.secrets.WIREGUARD_DNS_1.path)}"
+      "${builtins.replaceStrings ["\n"] [""] (builtins.readFile config.sops.secrets.WIREGUARD_DNS_2.path)}"
+    ];
     };
   };
   virtualisation.oci-containers.backend = "docker";
@@ -97,6 +102,20 @@
     '';
   };
   
+  systemd.services.init-services-network = {
+    description = "Create Services Private Docker Network";
+    after = [ "network.target" "docker.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${pkgs.docker}/bin/docker network inspect services-net >/dev/null 2>&1 || \
+      ${pkgs.docker}/bin/docker network create --driver bridge --subnet 172.24.0.0/16 services-net
+    '';
+  };
+
   /*
   # VPN NETWORKS
   systemd.services.init-vpn-in = {
