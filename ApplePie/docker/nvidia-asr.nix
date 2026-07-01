@@ -13,6 +13,7 @@
       "--network=ai-net"
       "--network=home-net"
       "--network-alias=nvidia-asr"
+      "--ip=172.21.0.7"
     ];
     environment = {
       

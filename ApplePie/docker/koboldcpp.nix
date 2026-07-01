@@ -17,6 +17,7 @@
       "--memory-swap=16g"
       "--network-alias=koboldcpp"
       "--network=ai-net"
+      "--ip=172.21.0.2"
     ];
     environmentFiles = [
       config.sops.secrets.koboldcpp.path

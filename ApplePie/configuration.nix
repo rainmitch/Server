@@ -33,12 +33,15 @@
   "vm.swappiness" = 10;
   "net.ipv4.ip_forward" = 1;
 
-  "net.ipv4.conf.all.rp_filter" = 2;
-  "net.ipv4.conf.default.rp_filter" = 2;
-  "net.ipv4.conf.eno2.rp_filter" = 2;
-  "net.ipv4.conf.vpn-out.rp_filter" = 2;
-  "net.ipv4.conf.vpn-in.rp_filter" = 2;
-  "net.ipv4.conf.docker0.rp_filter" = 2;
+  #"net.ipv4.conf.all.rp_filter" = 2;
+  #"net.ipv4.conf.default.rp_filter" = 2;
+  #"net.ipv4.conf.eno2.rp_filter" = 2;
+  #"net.ipv4.conf.vpn-out.rp_filter" = 2;
+  #"net.ipv4.conf.vpn-in.rp_filter" = 2;
+  #"net.ipv4.conf.docker0.rp_filter" = 2;
+  "net.ipv4.conf.all.rp_filter"=0;
+  "net.ipv4.conf.default.rp_filter"=0;
+  "net.ipv4.conf.all.log_martians"=1;
 
   #"net.bridge.bridge-nf-call-iptables" = 1;
   #"net.bridge.bridge-nf-call-ip6tables" = 1;

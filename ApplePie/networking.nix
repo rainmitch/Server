@@ -106,13 +106,17 @@
       # This is where we configure Table 100 safely.
       ExecStartPost = pkgs.writeShellScript "vpn-in-post-up" ''
         VPN_SERVER_IP=$(${pkgs.coreutils}/bin/cat ${config.sops.secrets.WIREGUARD_VPN_IN_SERVER.path})
+        VPN_CLIENT_IP=$(${pkgs.coreutils}/bin/cat ${config.sops.secrets.WIREGUARD_VPN_IN_CLIENT.path})
         ${pkgs.iproute2}/bin/ip route add "$VPN_SERVER_IP" via 192.168.0.1 dev eno2 proto static || true
+       # ${pkgs.iproute2}/bin/ip rule add from "$VPN_CLIENT_IP" table 200
+        #${pkgs.iproute2}/bin/ip route add "$VPN_CLIENT_IP" dev vpn-in table 200 || true
         # Create the default route inside table 200
-        ${pkgs.iproute2}/bin/ip route replace default dev vpn-out table 200
-
+        ${pkgs.iproute2}/bin/ip route replace default dev vpn-in table 200
+        ${pkgs.iproute2}/bin/ip route add from 172.16.0.0/12 lookup 200
+        
         # Tell the kernel to use table 200 for marked packets
         ${pkgs.iproute2}/bin/ip rule add fwmark 0x2 table 200 || true
-
+        
         # Flush cache to make it immediate
         ${pkgs.iproute2}/bin/ip route flush cache
       '';
@@ -124,9 +128,13 @@
       # Clean up routing rules on stop
       ExecStopPost = pkgs.writeShellScript "vpn-in-post-down" ''
         VPN_SERVER_IP=$(cat ${config.sops.secrets.WIREGUARD_VPN_IN_SERVER.path})
+        VPN_CLIENT_IP=$(${pkgs.coreutils}/bin/cat ${config.sops.secrets.WIREGUARD_VPN_IN_CLIENT.path})
+        # DYNAMIC DOCKER ROUTING CLEANUP
+
         ${pkgs.iproute2}/bin/ip rule del fwmark 0x2 table 200 || true
         ${pkgs.iproute2}/bin/ip route flush table 200 || true
         ${pkgs.iproute2}/bin/ip route del "$VPN_SERVER_IP" via 192.168.0.1 dev eno2 proto static || true
+        ${pkgs.iproute2}/bin/ip rule del from "$VPN_CLIENT_IP" table 200
         ${pkgs.iproute2}/bin/ip route flush cache
       '';
     };

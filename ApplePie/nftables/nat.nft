@@ -4,7 +4,13 @@ table ip nat {
         ip saddr 172.16.0.0/12 udp dport 53 dnat to $WIREGUARD_DNS_1
         ip saddr 172.16.0.0/12 tcp dport 53 dnat to $WIREGUARD_DNS_1
         # DNAT Port Forwarding
-        iifname "eno2" tcp dport 7000 dnat to 172.21.0.6:8080
+        iifname "eno2" tcp dport 7000 dnat to 172.21.0.5:8080
+        iifname "eno2" tcp dport 7388 dnat to 172.21.0.4:8000
+        iifname "eno2" tcp dport 81 dnat to 172.24.0.2:81
+        iifname "vpn-in" tcp dport 80  dnat to 172.24.0.2:80
+        iifname "vpn-in" udp dport 80  dnat to 172.24.0.2:80
+        iifname "vpn-in" tcp dport 443  dnat to 172.24.0.2:443
+        iifname "vpn-in" udp dport 443  dnat to 172.24.0.2:443
     }
 
     chain postrouting_nat {
@@ -13,5 +19,7 @@ table ip nat {
         # Outbound Masquerading
         oifname "vpn-out" masquerade
         oifname "eno2" masquerade
+        oifname "vpn-in" masquerade
+        meta mark 0x2 oifname { "br-*", "docker0" } masquerade
     }
 }

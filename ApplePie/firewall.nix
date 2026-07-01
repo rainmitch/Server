@@ -13,6 +13,7 @@
       
       # Define variables
       define WIREGUARD_VPN_IN_SERVER = ${builtins.readFile config.sops.secrets.WIREGUARD_VPN_IN_SERVER.path}
+      define WIREGUARD_VPN_IN_CLIENT = ${builtins.readFile config.sops.secrets.WIREGUARD_VPN_IN_CLIENT.path}
       define WIREGUARD_VPN_OUT_SERVER = ${builtins.readFile config.sops.secrets.WIREGUARD_VPN_OUT_SERVER.path}
       define WIREGUARD_DNS_1 = ${builtins.readFile config.sops.secrets.WIREGUARD_DNS_1.path}
       define WIREGUARD_DNS_2 = ${builtins.readFile config.sops.secrets.WIREGUARD_DNS_2.path}

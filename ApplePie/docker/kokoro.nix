@@ -14,6 +14,7 @@
       "--network=ai-net"
       "--network=home-net"
       "--network-alias=kokoro"
+      "--ip=172.21.0.6"
     ];
     environment = {
       "PYTHONPATH" = "/app:/app/api";

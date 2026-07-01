@@ -13,6 +13,7 @@
     extraOptions = [
       "--network=ai-net"
       "--network-alias=openWebUI"
+      "--ip=172.21.0.5"
     ];
   };
 

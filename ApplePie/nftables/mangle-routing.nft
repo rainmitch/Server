@@ -1,7 +1,10 @@
 table ip mangle-routing {
    chain prerouting {
        type filter hook prerouting priority mangle; policy accept;
-       ip saddr 172.16.0.0/12 ip daddr != 172.16.0.0/12 ip daddr != 192.168.0.0/24 meta mark set 0x1
+       #meta mark set ct mark
+       iifname "vpn-in" ct state new ct mark set 0x2
+       iifname "br-*" ct mark 0x2 meta mark set 0x2
+       meta mark 0x0 ip saddr 172.16.0.0/12 ip daddr != 172.16.0.0/12 ip daddr != 192.168.0.0/24 fib daddr oif != "vpn-in" meta mark set 0x1
     }
 
     chain input {
@@ -11,11 +14,19 @@ table ip mangle-routing {
         iifname "lo" accept
         ip saddr 192.168.0.0/24 ct state new accept
         iifname "vpn-out" accept
+        iifname "vpn-in" ip protocol icmp accept
+        iifname "vpn-in" tcp dport 85 ct state new accept
+        ip daddr $WIREGUARD_VPN_IN_CLIENT udp dport { 80, 443 } accept
+        ip daddr $WIREGUARD_VPN_IN_CLIENT tcp dport { 80, 443 } accept
+        #iifname "vpn-in" accept
     }
 
     chain forward {
         type filter hook forward priority filter; policy drop;
         ct state established,related accept
+        ip saddr 172.16.0.0/12 ip daddr $WIREGUARD_VPN_IN_CLIENT accept
+        #iifname "vpn-in" ip daddr 172.24.0.2 tcp dport 80 accept
+        iifname "vpn-in" ip daddr 172.16.0.0/12 accept
         ip saddr 192.168.0.0/24 ip daddr 172.16.0.0/12 accept
         ip saddr 172.16.0.0/12 ip daddr 172.16.0.0/12 drop
         ip saddr 172.16.0.0/12 ip daddr 127.0.0.11 accept
@@ -25,22 +36,16 @@ table ip mangle-routing {
 
     chain output {
         type route hook output priority mangle; policy accept;
+        meta mark set ct mark
         ip daddr { 192.168.0.0/24, 172.16.0.0/12 } accept
         ip daddr $WIREGUARD_VPN_OUT_SERVER udp dport 9929 accept
         ip daddr $WIREGUARD_VPN_IN_SERVER udp dport 9930 accept
         ip daddr { $WIREGUARD_DNS_1, $WIREGUARD_DNS_2 } udp dport 53 accept
         ip daddr { $WIREGUARD_DNS_1, $WIREGUARD_DNS_2 } tcp dport 53 accept
-        #udp dport 53 accept
-        #tcp dport 53 accept
         # Let anything go out of vpn-out
         oifname "vpn-out" accept
-        meta mark set 0x1
-    }
-
-    chain postrouting {
-        type nat hook postrouting priority srcnat; policy accept;
-        #oifname "eno2" masquerade
-        meta mark 0x1 masquerade
-        oifname "vpn-out" masquerade
+        oifname "vpn-in" accept
+        ct mark 0x2 meta mark set 0x2
+        meta mark 0x0 meta mark set 0x1
     }
 }
